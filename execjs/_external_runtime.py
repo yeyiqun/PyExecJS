@@ -1,4 +1,5 @@
 from subprocess import Popen, PIPE
+import subprocess
 import io
 import json
 import os
@@ -96,7 +97,9 @@ class ExternalRuntime(AbstractRuntime):
 
             p = None
             try:
-                p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=self._cwd, universal_newlines=True)
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                p = Popen(cmd,startupinfo=startupinfo, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=self._cwd, universal_newlines=True)
                 input = self._compile(source)
                 if six.PY2:
                     input = input.encode(sys.getfilesystemencoding())
